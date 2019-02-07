@@ -14,11 +14,12 @@ namespace _MyScripts {
 
         private void OnTriggerExit2D(Collider2D other) {
             if (other.CompareTag("Respawn")) {
-                other.GetComponent<Brain>().PlayAudio(isDead: true);
-                other.gameObject.SetActive(false);
+                other.GetComponent<BrainOrHeart>().Shit();
+//                other.GetComponent<BrainOrHeart>().PlayAudio(isDead: true);
+//                other.gameObject.SetActive(false);
                 other.transform.position = Vector3.zero;
 //                other.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
-                other.gameObject.SetActive(true);
+//                other.gameObject.SetActive(true);
                 _score = 0;
                 _death++;
                 UpdateScore();

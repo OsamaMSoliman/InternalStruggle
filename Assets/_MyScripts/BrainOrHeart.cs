@@ -1,24 +1,33 @@
 ﻿using UnityEngine;
 
 namespace _MyScripts {
-    public class Brain : MonoBehaviour {
-        public static Brain Self;
-        [SerializeField] private float          _speed = 10f;
+    public class BrainOrHeart : MonoBehaviour {
+        public static BrainOrHeart Brain;
+        public static BrainOrHeart Heart;
+
+        [SerializeField] private bool           _isBrain;
+        [SerializeField] private float          _speed     = 10f;
+        [SerializeField] private float          _sizeDelta = 0.1f;
         [SerializeField] private GameController _gameController;
         [SerializeField] private AudioClip      _hurtClip;
         [SerializeField] private AudioClip      _deathClip;
 
+
         private Rigidbody2D _rb2D;
         private float       _angle;
         private AudioSource _audioSource;
+        private float       _size = 1f;
+        private Vector3     _startSize;
 
 
         private void Awake() {
-            Self = this;
-            _rb2D = GetComponent<Rigidbody2D>();
+            if (_isBrain) Brain = this;
+            else Heart          = this;
+            _rb2D        = GetComponent<Rigidbody2D>();
             _audioSource = GetComponent<AudioSource>();
             if (_gameController == null) Debug.LogError("GameController is not set", gameObject);
             if (_speed          == 0) Debug.LogError("_speed is ZERO",               gameObject);
+            _startSize = transform.localScale;
         }
 
         private void OnEnable() { _rb2D.AddForce(Vector2.one * Random.value * _speed, ForceMode2D.Impulse); }
@@ -53,9 +62,19 @@ namespace _MyScripts {
             _angle = velocity.magnitude;
         }
 
-        public void PlayAudio(bool isDead=false) {
+        private void PlayAudio(bool isDead = false) {
             _audioSource.clip = isDead ? _deathClip : _hurtClip;
             _audioSource.Play();
+        }
+
+        public void Shit() {
+            if (_size <= _sizeDelta*5) return;
+            _size -= _sizeDelta;
+            if (_isBrain) { Heart._size += _sizeDelta; } else { Brain._size += _sizeDelta; }
+
+            Heart.transform.localScale = _startSize * Heart._size;
+            Brain.transform.localScale = _startSize * Brain._size;
+            Debug.Log("Heart size: " + Heart._size + " Brain size: " + Brain._size + " Total size:" + (Heart._size + Brain._size));
         }
     }
 }
